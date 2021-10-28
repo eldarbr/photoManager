@@ -1,2 +1,5 @@
 # ignore pycharm .idea folder
 .idea
+
+# ignore filled config file with sensitive data
+config.ini
