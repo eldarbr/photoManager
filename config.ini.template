@@ -20,6 +20,10 @@ OAuthToken =
 # https://yandex.com/dev/disk/api/reference/upload.html
 mainFolder =
 
+# back up original photos
+# will be uploaded to a private folder in Yandex.disk
+backup =
+
 
 [RESIZER]
 
