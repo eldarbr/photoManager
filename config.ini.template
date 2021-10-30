@@ -1,17 +1,17 @@
 [Y.DISK]
 
-# oauth api key
-# about obtaining the key:
+# OAuth token - access to Yadex API
+# read about obtaining the key:
 # https://yandex.com/dev/disk/api/concepts/quickstart.html
 
-apiKEY =
+OAuthToken =
 
 
 # path to main folder in Yandex.disk
-# about folders:
+# read about folders at disk:
 # https://yandex.com/dev/disk/api/reference/upload.html
 
-savePath =
+mainFolder =
 
 
 [RESIZER]
@@ -33,3 +33,10 @@ savePath =
 # the photo will be exported at its original size at given quality
 
 newSizes =
+
+
+[SECURITY]
+
+# constant password for signature generator
+
+password =
