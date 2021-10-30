@@ -1,16 +1,23 @@
+[GENERIC]
+
+# local temporary folder for storing photos before uploading to disk
+temporaryFolder = ./temp
+
+# delete photos after uploading
+deleteTemp = true
+
+
 [Y.DISK]
 
 # OAuth token - access to Yadex API
 # read about obtaining the key:
 # https://yandex.com/dev/disk/api/concepts/quickstart.html
-
 OAuthToken =
 
 
 # path to main folder in Yandex.disk
 # read about folders at disk:
 # https://yandex.com/dev/disk/api/reference/upload.html
-
 mainFolder =
 
 
@@ -31,12 +38,10 @@ mainFolder =
 # NOTE
 # if given size is larger than the original photo's size,
 # the photo will be exported at its original size at given quality
-
 newSizes =
 
 
 [SECURITY]
 
 # constant password for signature generator
-
 password =

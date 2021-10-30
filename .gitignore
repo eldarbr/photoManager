@@ -7,6 +7,8 @@ config.ini
 # main file in developement
 main.py
 
+# folder with temporary photos
+temp
 
 
 ####################
