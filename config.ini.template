@@ -6,6 +6,10 @@ temporaryFolder = ./temp
 # delete photos after uploading
 deleteTemp = true
 
+# back up original photos
+# will be uploaded to a private folder in Yandex.disk
+backup =
+
 
 [Y.DISK]
 
@@ -25,24 +29,21 @@ expires_at =
 # https://yandex.com/dev/disk/api/reference/upload.html
 mainFolder =
 
-# back up original photos
-# will be uploaded to a private folder in Yandex.disk
-backup =
-
 
 [RESIZER]
 
 # list of lengths in pixels of the long sides of the resized photos
 # and corresponding jpeg quality export property - int 0 to 100
+# prefix - height (h) or width (w) or long side (m) restriction
 # separators!
-# between size and quality - ":"
+# between size, side, and quality - ":"
 # between sizes - ","
 
 # e.g. source photo resolution is 6000*4000
-# the goal is a thumbnail with long side 900px and a resized photo with long side 4096px
+# the goal is a thumbnail with height 900px and a resized photo with long side 4096px
 # thumbnail quality - 50, photo quality - 80
 # so write down the following string:
-# newSizes = 900:50, 4096:80
+# newSizes = h:900:50, m:4096:80
 
 # NOTE
 # if given size is larger than the original photo's size,
