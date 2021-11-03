@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="Pragma" content="no-cache">
+        <meta http-equiv="Cache-Control" content="no-cache">
+        <title>Sending token</title>
+    </head>
+    <body>
+
+        <h3>Sending token to the app</h3>
+        The redirection should happen instantly. if not, click <a href="" id="redirect">here</a>
+        (javascript must be turned on)
+
+        <script type = "text/javascript">
+            if (document.location.href.includes("#")){
+                document.getElementById("redirect").href=document.location.href.replace("#", "?");
+                document.getElementById("redirect").click();
+            }
+        </script>
+    </body>
+</html>

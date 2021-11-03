@@ -9,11 +9,16 @@ deleteTemp = true
 
 [Y.DISK]
 
-# OAuth token - access to Yadex API
+# OAuth credentials - access to Yadex API
+# application id and password
 # read about obtaining the key:
 # https://yandex.com/dev/disk/api/concepts/quickstart.html
-OAuthToken =
+OAuthID =
 
+# do not overwrite
+# last obtained token and unix-time of expiration
+OAuthToken =
+expires_at =
 
 # path to main folder in Yandex.disk
 # read about folders at disk:

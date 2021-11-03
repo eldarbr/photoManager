@@ -45,7 +45,7 @@ def parse_config():
     Configuration parser
     Reads parameters from config.ini associated with resizer module
 
-    :return: export_presets, temp_folder
+    :return: temp_folder, export_presets
     """
     config = ConfigParser()
     config.read("config.ini")
@@ -53,7 +53,7 @@ def parse_config():
     temp_folder = config["GENERIC"]["temporaryFolder"]
     if not os.path.exists(temp_folder):
         os.mkdir(temp_folder)
-    return export_presets, temp_folder
+    return temp_folder, export_presets
 
 
 def auto_resize(image_path):
@@ -62,32 +62,33 @@ def auto_resize(image_path):
 
     :param image_path: input image path
     """
-    export_presets, temp_path = parse_config()
+    target_folder, export_presets = parse_config()
+    target_folder = target_folder.replace("/", "\\")
+
     for preset in export_presets:
-        file_name = image_path.split("/")[-1]
+        file_name = image_path.split("\\")[-1]
         size, quality = preset
         resize(image_path, size, quality,
-               temp_path+"/"+file_name.replace(".", "_"+str(size)+"."))  # insert size suffix to target file name
+               target_folder+"\\"+file_name.replace(".", "_"+str(size)+"."))  # insert size suffix to target file name
 
 
-def multiple_resize(paths_array):
+def multiple_resize(image_paths_array):
     """
     Automatically processes every image from given array of paths according to export parameters at config.ini
     Can process folders - processes every image from folder
 
-    :param paths_array: array of input images/folders paths
+    :param image_paths_array: array of input images/folders paths
     """
-    for element in paths_array:
-        element = element.replace("\\", "/")
+    for element in image_paths_array:
         if os.path.isfile(element):                                 # if given path is a file, resize it
             auto_resize(element)
         else:
-            paths = [element+"/"+i for i in os.listdir(element)]
+            paths = [element+"\\"+i for i in os.listdir(element)]
             multiple_resize(paths)                                  # else resize any file in given folder
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('images', nargs='+')
+    parser.add_argument('images', nargs='+', help="paths of input images or folders with images")
     args = parser.parse_args()
     multiple_resize(args.images)
