@@ -18,9 +18,8 @@ def resize(source_file, max_side, max_side_size, quality, target_file):
 
     with Image.open(source_file) as image:
         if image.format != "JPEG":
-            print("Image {} was not processed as it is in unsupported format ({}) instead of JPEG".format(source_file,
-                                                                                                          image.format))
-            return 1
+            raise Exception("Image {} was not processed as it is in unsupported format ({}) instead of JPEG".
+                            format(source_file, image.format))
         source_width, source_height = image.width, image.height
         aspect = source_width / source_height
 
@@ -83,6 +82,7 @@ def auto_resize(image_path):
     Automatically processes given image according to export parameters at config.ini
 
     :param image_path: input image path
+    :return: 0 if resizing succeeded
     """
     target_folder, export_presets = parse_config()
     target_folder = target_folder.replace("/", "\\")
@@ -90,9 +90,9 @@ def auto_resize(image_path):
     for preset in export_presets:
         file_name = image_path.split("\\")[-1]
         side, size, quality = preset
-        resize(image_path, side, size, quality,
-               target_folder + "\\" + file_name.replace(".", "_" + str(size) + "_" + str(quality) + "."))
-                                            # insert size-quality suffix to target file name
+        return resize(image_path, side, size, quality,
+                      target_folder + "\\" + file_name.replace(".", "_" + str(size) + "_" + str(quality) + "."))
+                                    # insert size-quality suffix to target file filename
 
 
 def multiple_resize(image_paths_array):
@@ -101,7 +101,9 @@ def multiple_resize(image_paths_array):
     Can process folders - processes every image from folder
 
     :param image_paths_array: array of input images/folders paths
+    :return: 0 on successful completion of processing all given images
     """
+
     for element in image_paths_array:
         if os.path.isfile(element):  # if given path is a file, resize it
             auto_resize(element)

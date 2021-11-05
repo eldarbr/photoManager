@@ -24,7 +24,7 @@ OAuthID =
 OAuthToken =
 expires_at =
 
-# path to main folder in Yandex.disk
+# path to main folder at Yandex.disk
 # read about folders at disk:
 # https://yandex.com/dev/disk/api/reference/upload.html
 mainFolder =
