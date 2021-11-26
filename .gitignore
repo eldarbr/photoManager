@@ -10,6 +10,9 @@ main.py
 # folder with temporary photos
 temp
 
+# developer's secret
+tests.py
+
 
 ####################
 # PYTHON GITIGNORE #

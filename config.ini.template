@@ -13,7 +13,7 @@ backup =
 
 [Y.DISK]
 
-# OAuth credentials - access to Yadex API
+# OAuth credentials - access to Yandex API
 # application id and password
 # read about obtaining the key:
 # https://yandex.com/dev/disk/api/concepts/quickstart.html
@@ -32,26 +32,11 @@ mainFolder =
 
 [RESIZER]
 
-# list of lengths in pixels of the long sides of the resized photos
-# and corresponding jpeg quality export property - int 0 to 100
-# prefix - height (h) or width (w) or long side (m) restriction
-# separators!
-# between size, side, and quality - ":"
-# between sizes - ","
-
-# e.g. source photo resolution is 6000*4000
-# the goal is a thumbnail with height 900px and a resized photo with long side 4096px
-# thumbnail quality - 50, photo quality - 80
-# so write down the following string:
-# newSizes = h:900:50, m:4096:80
-
-# NOTE
-# if given size is larger than the original photo's size,
-# the photo will be exported at its original size at given quality
+# 3 comma separated export quality settings
+# (three!):
+# preview, medium, large
+# setting format - side:length:quality
+# side - one of (h, w, m) - height (h) or width (w) or longer side (m) restriction
+# length - restrict specified side to this length
+# quality - jpeg quality export property - in range of 0 to 100
 newSizes =
-
-
-[SECURITY]
-
-# constant password for signature generator
-password =

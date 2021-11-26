@@ -1,10 +1,39 @@
 from PIL import Image
-from configparser import ConfigParser
 import argparse
-import os
+from config import Configurator
+
+suffixes = ["preview", "medium", "large"]
 
 
-def resize(source_file, max_side, max_side_size, quality, target_file):
+class Resizer:
+    def __init__(self):
+        """
+        Prepare config
+        """
+        configurator = Configurator()
+        self.export_presets, self.temp_path = configurator.resizer()
+
+    def resize_three(self, source_file):
+        """
+        Resize source file to preview, medium, large formats according to config file and saves to the temp folder
+        :param source_file: source image
+        :return:
+        """
+        source_file = source_file.replace("/", "\\")
+        source_file_name = source_file.split("\\")[-1]
+        report = {"created_images": [], "faulty_photos": []}
+        for i in range(3):
+            target_file = self.temp_path + "\\" + source_file_name.replace(".", "_" + suffixes[i] + ".")
+            preset = self.export_presets[i]
+            result = smart_resize(source_file, preset.side, preset.length, preset.quality, target_file)
+            if not result:
+                report["created_images"] += [target_file]
+            else:
+                report["faulty_photos"] += [target_file]
+        return report
+
+
+def smart_resize(source_file, max_side, max_side_size, quality, target_file):
     """
     Resizes given jpeg according to specified and saves it to target file
 
@@ -13,13 +42,16 @@ def resize(source_file, max_side, max_side_size, quality, target_file):
     :param max_side: side of image to be restricted
     :param quality: quality export settings
     :param target_file: output image path
-    :return: 0 - no errors; 1 - wrong input image format
+    :return: 0 - ok; 1 - unsupported input format; 2 - wrong max side property; 3 - exporting error
     """
 
     with Image.open(source_file) as image:
         if image.format != "JPEG":
-            raise Exception("Image {} was not processed as it is in unsupported format ({}) instead of JPEG".
-                            format(source_file, image.format))
+            print("[smart_resize import exception]")
+            print(f"Image {source_file} was not processed as it is in unsupported format"
+                  f"({image.format}) instead of JPEG")
+            return 1
+
         source_width, source_height = image.width, image.height
         aspect = source_width / source_height
 
@@ -47,73 +79,32 @@ def resize(source_file, max_side, max_side_size, quality, target_file):
             else:
                 downscaled_image = image
         else:
-            raise Exception('Wrong max side property - not in range ["h", "w", "m"]')
+            print("[smart_resize exception]")
+            print(f'Wrong max side property ({max_side}) - not in range ["h", "w", "m"]')
+            return 2
 
+        # copy exif info from original photo
         if "exif" in image.info:
             exif = image.info['exif']
         else:
             exif = b""
-        downscaled_image.save(target_file, 'jpeg', quality=quality, icc_profile=image.info.get('icc_profile'),
-                              progressive=True, subsampling=0, exif=exif)
+
+        # export resized image
+        try:
+            downscaled_image.save(target_file, 'jpeg', quality=quality, icc_profile=image.info.get('icc_profile'),
+                                  progressive=True, subsampling=0, exif=exif)
+        # handle errors of exporting
+        except Exception as e:
+            print("[smart_resize export exception]")
+            print(e)
+            return 3
+
         return 0
-
-
-def parse_config():
-    """
-    Configuration parser
-    Reads parameters from config.ini associated with resizer module
-
-    :return: temp_folder, export_presets
-    """
-    config = ConfigParser()
-    config.read("config.ini")
-    export_presets = []
-    for x in config["RESIZER"]["newSizes"].replace(" ", "").split(","):
-        g = x.split(":")
-        export_presets += [(g[0], int(g[1]), int(g[2]))]
-    temp_folder = config["GENERIC"]["temporaryFolder"]
-    if not os.path.exists(temp_folder):
-        os.mkdir(temp_folder)
-    return temp_folder, export_presets
-
-
-def auto_resize(image_path):
-    """
-    Automatically processes given image according to export parameters at config.ini
-
-    :param image_path: input image path
-    :return: 0 if resizing succeeded
-    """
-    target_folder, export_presets = parse_config()
-    target_folder = target_folder.replace("/", "\\")
-
-    for preset in export_presets:
-        file_name = image_path.split("\\")[-1]
-        side, size, quality = preset
-        return resize(image_path, side, size, quality,
-                      target_folder + "\\" + file_name.replace(".", "_" + str(size) + "_" + str(quality) + "."))
-                                    # insert size-quality suffix to target file filename
-
-
-def multiple_resize(image_paths_array):
-    """
-    Automatically processes every image from given array of paths according to export parameters at config.ini
-    Can process folders - processes every image from folder
-
-    :param image_paths_array: array of input images/folders paths
-    :return: 0 on successful completion of processing all given images
-    """
-
-    for element in image_paths_array:
-        if os.path.isfile(element):  # if given path is a file, resize it
-            auto_resize(element)
-        else:
-            paths = [element + "\\" + i for i in os.listdir(element)]
-            multiple_resize(paths)  # else resize any file in given folder
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('images', nargs='+', help="paths of input images or folders with images")
+    parser.add_argument('image', nargs=1, help="path of input image")
     args = parser.parse_args()
-    multiple_resize(args.images)
+    resizer = Resizer()
+    print(resizer.resize_three(args.image[0]))
