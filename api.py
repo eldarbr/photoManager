@@ -10,7 +10,7 @@ class Api:
     def __init__(self):
         config = Configurator()
         self.api_host, self.password = config.api()
-        self.headers = {"Authentication": self.password}
+        self.headers = {"Authorization": self.password}
 
     def create_photo(self, photo_name, href_preview, href_medium, href_large,
                      photo_description=None, timestamp=None, hidden=None, photo_categories=None):
@@ -58,7 +58,7 @@ class Api:
         endpoint = self.api_host + "master/modify/photo"
         return requests.request("post", endpoint, headers=self.headers, data=data).text
 
-    def get_photo(self, photo_id, include_hidden=False):
+    def get_photo(self, photo_id, include_hidden=True):
         """
         Get photo by id with possibility to get hidden photo
         :param photo_id: photo id
@@ -104,7 +104,7 @@ class Api:
         endpoint = self.api_host + "master/modify/category"
         return requests.request("post", endpoint, headers=self.headers, data=data).text
 
-    def get_category(self, category_id, include_hidden=False):
+    def get_category(self, category_id, include_hidden=True):
         """
         Get category by id with possibility to see get category
         :param category_id: category id
