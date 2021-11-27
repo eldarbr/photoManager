@@ -3,13 +3,6 @@
 # local temporary folder for storing photos before uploading to disk
 temporaryFolder = ./temp
 
-# delete photos after uploading
-deleteTemp = true
-
-# back up original photos
-# will be uploaded to a private folder in Yandex.disk
-backup =
-
 
 [Y.DISK]
 
@@ -40,3 +33,14 @@ mainFolder =
 # length - restrict specified side to this length
 # quality - jpeg quality export property - in range of 0 to 100
 newSizes =
+
+
+[uploader]
+
+# back up original photos
+# will be uploaded to a private folder in Yandex.disk
+# true/false
+backup =
+
+# delete photos after uploading
+deleteTemp = true

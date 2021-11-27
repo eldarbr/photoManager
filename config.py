@@ -11,7 +11,7 @@ class Configurator:
 
     def resizer(self):
         """
-        Configurator for resizer
+        Configurator for resizer module
         :return: list of ExportPresets, temp folder path
         """
         export_presets = []
@@ -30,4 +30,29 @@ class Configurator:
         return export_presets, temp_folder
 
     def uploader(self):
-        pass
+        """
+        Configurator for uploader module
+        :return: OAuthToken, backup, deleteTemp, mainFolder settings
+        """
+        return self.config["Y.DISK"]["OAuthToken"], \
+               self.config["Y.DISK"]["mainfolder"]
+
+    def oauth_read(self):
+        """
+        Configurator for oauth module
+        :return: OAuthID, OAuthToken, expires_at settings
+        """
+        return self.config["Y.DISK"]["OAuthID"], \
+               self.config["Y.DISK"]["OAuthToken"], \
+               self.config["Y.DISK"]["expires_at"]
+
+    def oauth_write(self, token, expiration):
+        """
+        Re-configurator for oauth module
+        :param token: new token to be saved
+        :param expiration: new expiration time to be saved
+        """
+        self.config.set("Y.DISK", "OAuthToken", token)
+        self.config.set("Y.DISK", "expires_at", expiration)
+        with open("config.ini", "w") as configfile:
+            self.config.write(configfile)

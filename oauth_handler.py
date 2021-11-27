@@ -1,26 +1,18 @@
 import http.server
 import socketserver
-from time import time
+from time import time, strftime, gmtime
 import os
-from configparser import ConfigParser
+from config import Configurator
 from urllib.parse import urlparse, parse_qs
 
 
 my_server = socketserver
 serving = True
+oauth_token, oauth_token_expires = 0, 0
 
 
-def read_config():
-    config = ConfigParser()
-    config.read("config.ini")
-    id = config["Y.DISK"]["OAuthID"]
-    return id
-
-
-def request_token():
-    oauth_id = read_config()
+def request_token(oauth_id):
     os.system('explorer.exe "https://oauth.yandex.ru/authorize?response_type=token&client_id={}"'.format(oauth_id))
-    receive_token()
 
 
 def receive_token():
@@ -32,26 +24,17 @@ def receive_token():
         my_server.handle_request()
 
 
-def write_config(token, expiration):
-    config = ConfigParser()
-    config.read("config.ini")
-    config.set("Y.DISK", "OAuthToken", token)
-    config.set("Y.DISK", "expires_at", expiration)
-    with open("config.ini", "w") as configfile:
-        config.write(configfile)
-
-
 def parse_token(path):
+    global oauth_token, oauth_token_expires
     if "?" in path and "token" in path:
         if "error" in path:
             print("error!")
             print(path)
         else:
             arguments = parse_qs(urlparse(path).query)
-            token = arguments["access_token"][0]
+            oauth_token = arguments["access_token"][0]
             expires_in = int(arguments["expires_in"][0])
-            expiration_time = str(int(time()) + expires_in)
-            write_config(token, expiration_time)
+            oauth_token_expires = str(int(time()) + expires_in)
 
 
 def shutdown_server():
@@ -73,3 +56,20 @@ class MyHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
         if shutdown:
             shutdown_server()
         return q
+
+
+if __name__ == "__main__":
+    config = Configurator()
+    oauth_id, oauth_token, oauth_token_expires = config.oauth_read()
+    reobtain = "/"
+    if len(oauth_token_expires) and time() < int(oauth_token_expires):
+        while reobtain not in ("n", "N", "", "y", "Y"):
+            reobtain = input("The previous token is still valid. Confirm token re-obtaining? [y/N]: ")
+    if reobtain in ("y", "Y", "/"):
+        request_token(oauth_id)
+        receive_token()
+    else:
+        serving = False
+    while serving:
+        continue
+    print(f"Token: {oauth_token}\nExpires at: {strftime('%d.%m.%Y %H:%M:%S', gmtime(int(oauth_token_expires)))}")
