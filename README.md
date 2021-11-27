@@ -7,5 +7,5 @@
 - \+ resize it to specified formats
 - \+ handle Yandex OAuth 2.0 authentication
 - \+ upload to yandex.disk
-- \- make recourse public, obtain direct link to the content
+- \+ make recourse public, obtain direct link to the content
 - \- control gallery appearance
