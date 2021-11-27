@@ -44,3 +44,13 @@ backup =
 
 # delete photos after uploading
 deleteTemp = true
+
+
+[API]
+
+# api host
+# http://host/
+url =
+
+# api authentication
+admin_password =

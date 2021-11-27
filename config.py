@@ -56,3 +56,12 @@ class Configurator:
         self.config.set("Y.DISK", "expires_at", expiration)
         with open("config.ini", "w") as configfile:
             self.config.write(configfile)
+
+    def api(self):
+        """
+        Configurator for api module
+        :return: api host url, admin password
+        """
+        url = self.config["API"]["url"]
+        password = self.config["API"]["admin_password"]
+        return url, password
