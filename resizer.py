@@ -1,6 +1,7 @@
-from PIL import Image
+from PIL import Image, ExifTags
 import argparse
 from config import Configurator
+import datetime
 
 suffixes = ["preview", "medium", "large"]
 
@@ -15,6 +16,7 @@ class Resizer:
 
     def resize_three(self, source_file):
         """
+        Crucial RESIZE function
         Resize source file to preview, medium, large formats according to config file and saves to the temp folder
         :param source_file: source image
         :return:
@@ -100,6 +102,27 @@ def smart_resize(source_file, max_side, max_side_size, quality, target_file):
             return 3
 
         return 0
+
+
+def original_timestamp(photo_path):
+    """
+    Get original timestamp of a photo
+    :param photo_path: path to photo
+    :return: original timestamp or empty string if unable to get timestamp from the photo
+    """
+    image_exif = Image.open(photo_path).getexif()
+    if image_exif:
+        # Make a map with tag names
+        exif = {ExifTags.TAGS[k]: v for k, v in image_exif.items() if k in ExifTags.TAGS and type(v) is not bytes}
+        # Grab the date
+        try:
+            date_time_original = exif['DateTimeOriginal']
+        except KeyError:
+            return ""
+        timestamp = datetime.datetime.strptime(date_time_original, '%Y:%m:%d %H:%M:%S').strftime("%d.%m.%y %H:%M")
+        return timestamp
+    else:
+        return ""
 
 
 if __name__ == '__main__':

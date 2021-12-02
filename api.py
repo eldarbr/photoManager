@@ -60,15 +60,27 @@ class Api:
 
     def get_photo(self, photo_id, include_hidden=True):
         """
-        Get photo by id with possibility to get hidden photo
+        Get photo by id with possibility to include hidden photo
         :param photo_id: photo id
-        :param include_hidden: include hidden
+        :param include_hidden: include hidden photo
         :return: string of json - server response
         """
         data = prepare_data({
             "id": photo_id, "include_hidden": include_hidden
         })
         endpoint = self.api_host + "master/get/photo"
+        return requests.request("post", endpoint, headers=self.headers, data=data).text
+
+    def photo_index(self, include_hidden=None):
+        """
+        Get photos index with possibility to include hidden photos
+        :param include_hidden: include hidden photos
+        :return: string of json - server response
+        """
+        data = prepare_data({
+            "include_hidden": include_hidden
+        })
+        endpoint = self.api_host + "master/index/photo"
         return requests.request("post", endpoint, headers=self.headers, data=data).text
 
     def create_category(self, category_name, category_description=None, hidden=None, category_photos=None):
@@ -106,15 +118,27 @@ class Api:
 
     def get_category(self, category_id, include_hidden=True):
         """
-        Get category by id with possibility to see get category
+        Get category by id with possibility to include hidden category
         :param category_id: category id
-        :param include_hidden: include hidden
+        :param include_hidden: include hidden category
         :return: string of json - server response
         """
         data = prepare_data({
             "id": category_id, "include_hidden": include_hidden
         })
         endpoint = self.api_host + "master/get/category"
+        return requests.request("post", endpoint, headers=self.headers, data=data).text
+
+    def category_index(self, include_hidden=True):
+        """
+        Get categories index with possibility to include hidden categories
+        :param include_hidden: include hidden categories
+        :return: string of json - server response
+        """
+        data = prepare_data({
+            "include_hidden": include_hidden
+        })
+        endpoint = self.api_host + "master/index/category"
         return requests.request("post", endpoint, headers=self.headers, data=data).text
 
     def contribute_relation(self, photo_id=None, category_id=None, photo_ids_list=None, category_ids_list=None):
